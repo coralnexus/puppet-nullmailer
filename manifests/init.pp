@@ -1,81 +1,90 @@
 # Class: nullmailer
 #
-#   This module manages the NullMailer MTA service.
+#   This module manages Nullmailer.
 #
-#   Adrian Webb <adrian.webb@coraltech.net>
-#   2012-05-22
+#   Adrian Webb <adrian.webb@coralnexus.com>
+#   2013-05-08
 #
 #   Tested platforms:
 #    - Ubuntu 12.04
 #
-# Parameters: (see <examples/params.json> for Hiera configurations)
+# Parameters: (see <example/params.json> for Hiera configurations)
 #
 # Actions:
 #
-#  Installs, configures, and manages the NullMailer MTA service.
+#  Installs, configures, and manages Nullmailer.
 #
 # Requires:
 #
 # Sample Usage:
 #
-#   $emailserver1 = {
-#      host     => 'mail.example.com',
-#      port     => 25,
-#      protocol => 'smtp',
-#      user     => 'me@example.com',
-#      password => 'mypassword',
-#   }
+#   include nullmailer
 #
-#   class { 'nullmailer':
-#     remotes => [ $emailserver1 ],
-#   }
-#
-# [Remember: No empty lines between comments and class definition]
-class nullmailer (
+class nullmailer inherits nullmailer::params {
 
-  $package          = $nullmailer::params::package,
-  $package_ensure   = $nullmailer::params::package_ensure,
-  $service          = $nullmailer::params::service,
-  $service_ensure   = $nullmailer::params::service_ensure,
-  $remotes_dir      = $nullmailer::params::remotes_dir,
-  $remotes_template = $nullmailer::params::remotes_template,
-  $remotes          = $nullmailer::params::remotes,
-
-) inherits nullmailer::params {
+  $base_name = $nullmailer::params::base_name
 
   #-----------------------------------------------------------------------------
   # Installation
 
-  if ! $package or ! $package_ensure {
-    fail('Nullmailer package and version must be defined')
-  }
-  package { 'nullmailer':
-    name   => $package,
-    ensure => $package_ensure,
+  coral::package { $base_name:
+    resources => {
+      build_packages  => {
+        name => $nullmailer::params::build_package_names
+      },
+      common_packages => {
+        name    => $nullmailer::params::common_package_names,
+        require => 'build_packages'
+      },
+      extra_packages  => {
+        name    => $nullmailer::params::extra_package_names,
+        require => 'common_packages'
+      }
+    },
+    defaults  => {
+      ensure => $nullmailer::params::package_ensure
+    }
   }
 
   #-----------------------------------------------------------------------------
   # Configuration
 
-  if $remotes_dir {
-    file { 'nullmailer-remotes':
-      path     => $remotes_dir,
-      owner    => 'mail',
-      group    => 'root',
-      mode     => '0660',
-      content  => template($remotes_template),
-      require  => Package['nullmailer'],
-      notify   => Service['nullmailer'],
+  $remotes = $nullmailer::params::remotes
+
+  coral::file { $base_name:
+    resources => {
+      config => {
+        path    => $nullmailer::params::remotes_file,
+        content => template($nullmailer::params::remotes_template),
+        owner   => $nullmailer::params::remotes_owner,
+        group   => $nullmailer::params::remotes_group,
+        mode    => $nullmailer::params::remotes_file_mode,
+        notify  => Service["${base_name}_service"]
+      }
     }
   }
 
   #-----------------------------------------------------------------------------
+  # Actions
+
+  coral::exec { $base_name: }
+
+  #-----------------------------------------------------------------------------
   # Services
 
-  service { 'nullmailer':
-    name    => $service,
-    ensure  => $service_ensure,
-    enable  => true,
-    require => Package['nullmailer'],
+  coral::service { $base_name:
+    resources => {
+      service => {
+        name   => $nullmailer::params::service_name,
+        ensure => $nullmailer::params::service_ensure
+      }
+    },
+    require => [ Coral::Package[$base_name], Coral::File[$base_name] ]
+  }
+
+  #---
+
+  coral::cron { $base_name:
+    require => Coral::Service[$base_name]
   }
 }

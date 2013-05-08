@@ -1,4 +1,4 @@
-## coraltech-nullmailer module
+## coralnexus-nullmailer
 
 ## Overview
 
