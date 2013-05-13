@@ -1,7 +1,7 @@
 
 class nullmailer::params inherits nullmailer::default {
 
-  $base_name = 'locales'
+  $base_name = 'nullmailer'
 
   #---
 
