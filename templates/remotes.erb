@@ -1,4 +1,4 @@
-<% remotes.each do |server| -%>
+<% @remotes.each do |server| -%>
 <% if server['host'] && server['user'] && server['password'] -%>
 <% protocol = server['protocol'] ? server['protocol'] : 'smtp' -%>
 <% port     = server['port'] ? server['port'] : '25' -%>
