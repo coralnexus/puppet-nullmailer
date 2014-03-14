@@ -1,5 +1,5 @@
 
-class nullmailer::params {
+class nullmailer::params inherits nullmailer::default {
 
   $base_name = 'nullmailer'
 
