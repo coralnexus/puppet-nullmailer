@@ -27,7 +27,7 @@ class nullmailer inherits nullmailer::params {
   #-----------------------------------------------------------------------------
   # Installation
 
-  coral::package { $base_name:
+  corl::package { $base_name:
     resources => {
       build_packages  => {
         name => $nullmailer::params::build_package_names
@@ -51,7 +51,7 @@ class nullmailer inherits nullmailer::params {
 
   $remotes = $nullmailer::params::remotes
 
-  coral::file { $base_name:
+  corl::file { $base_name:
     resources => {
       config => {
         path    => $nullmailer::params::remotes_file,
@@ -67,24 +67,24 @@ class nullmailer inherits nullmailer::params {
   #-----------------------------------------------------------------------------
   # Actions
 
-  coral::exec { $base_name: }
+  corl::exec { $base_name: }
 
   #-----------------------------------------------------------------------------
   # Services
 
-  coral::service { $base_name:
+  corl::service { $base_name:
     resources => {
       service => {
         name   => $nullmailer::params::service_name,
         ensure => $nullmailer::params::service_ensure
       }
     },
-    require => [ Coral::Package[$base_name], Coral::File[$base_name] ]
+    require => [ Corl::Package[$base_name], Corl::File[$base_name] ]
   }
 
   #---
 
-  coral::cron { $base_name:
-    require => Coral::Service[$base_name]
+  corl::cron { $base_name:
+    require => Corl::Service[$base_name]
   }
 }
