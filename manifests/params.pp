@@ -12,13 +12,17 @@ class nullmailer::params inherits nullmailer::default {
 
   #---
 
-  $remotes_file       = module_param('remotes_file')
-  $remotes_owner      = module_param('remotes_owner', 'mail')
-  $remotes_group      = module_param('remotes_group', 'root')
-  $remotes_file_mode  = module_param('remotes_file_mode', '0660')
+  $config_owner      = module_param('config_owner', 'mail')
+  $config_group      = module_param('config_group', 'root')
+  $config_file_mode  = module_param('config_file_mode', '0660')
 
+  $remotes_file       = module_param('remotes_file')
   $remotes_template   = module_param('remotes_template', 'nullmailer/remotes.erb')
   $remotes            = module_array('remotes')
+
+  $default_domain_file     = module_param('default_domain_file')
+  $default_domain_template = module_param('default_domain_template', 'nullmailer/defaultdomain.erb')
+  $default_domain          = module_param('default_domain')
 
   #---
 

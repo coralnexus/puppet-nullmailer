@@ -49,16 +49,25 @@ class nullmailer inherits nullmailer::params {
   #-----------------------------------------------------------------------------
   # Configuration
 
-  $remotes = $nullmailer::params::remotes
+  $remotes        = $nullmailer::params::remotes
+  $default_domain = $nullmailer::params::default_domain
 
   corl::file { $base_name:
     resources => {
-      config => {
+      remotes => {
         path    => $nullmailer::params::remotes_file,
         content => template($nullmailer::params::remotes_template),
-        owner   => $nullmailer::params::remotes_owner,
-        group   => $nullmailer::params::remotes_group,
-        mode    => $nullmailer::params::remotes_file_mode,
+        owner   => $nullmailer::params::config_owner,
+        group   => $nullmailer::params::config_group,
+        mode    => $nullmailer::params::config_file_mode,
+        notify  => Service["${base_name}_service"]
+      },
+      default_domain => {
+        path    => ensure($default_domain, $nullmailer::params::default_domain_file)
+        content => template($nullmailer::params::default_domain_template),
+        owner   => $nullmailer::params::config_owner,
+        group   => $nullmailer::params::config_group,
+        mode    => $nullmailer::params::config_file_mode,
         notify  => Service["${base_name}_service"]
       }
     }
