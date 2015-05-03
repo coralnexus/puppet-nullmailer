@@ -63,7 +63,7 @@ class nullmailer inherits nullmailer::params {
         notify  => Service["${base_name}_service"]
       },
       default_domain => {
-        path    => ensure($default_domain, $nullmailer::params::default_domain_file)
+        path    => ensure($default_domain, $nullmailer::params::default_domain_file),
         content => template($nullmailer::params::default_domain_template),
         owner   => $nullmailer::params::config_owner,
         group   => $nullmailer::params::config_group,
