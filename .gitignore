@@ -4,3 +4,4 @@ pkg/
 
 # Nucleon/CORL files
 .nucleon
+.project_cache
