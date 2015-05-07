@@ -70,7 +70,8 @@ class nullmailer inherits nullmailer::params {
         mode    => $nullmailer::params::config_file_mode,
         notify  => Service["${base_name}_service"]
       }
-    }
+    },
+    require => Corl::Package[$base_name]
   }
 
   #-----------------------------------------------------------------------------
